@@ -1,3 +1,5 @@
+//src/controllers/productController.js
+
 const service = require('../services/productService');
 
 const create = async (req, res) => {

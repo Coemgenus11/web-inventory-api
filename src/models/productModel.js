@@ -1,3 +1,5 @@
+//src/models/productModel.js
+
 
 const pool = require('../config/db');
 

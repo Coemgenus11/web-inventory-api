@@ -1,3 +1,5 @@
+//src/services/productService.js
+
 const productModel = require('../models/productModel');
 const categoryModel = require('../models/categoryModel');
 const { generateRandomString } = require('../utils/skuGenerator');

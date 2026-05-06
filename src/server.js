@@ -1,13 +1,16 @@
+//src/server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const productRoutes = require('./routes/productRoutes');
 const salesRoutes = require('./routes/salesRoutes');
+const authRoutes = require('./routes/authRoutes'); // BAGO
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use('/api', authRoutes); // BAGO
 app.use('/api', productRoutes);
 app.use('/api', salesRoutes);
 
