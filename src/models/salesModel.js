@@ -31,7 +31,23 @@ const getSummary = async () => {
     SELECT COUNT(*) as orders, COALESCE(SUM(total_amount),0) as total
     FROM sales WHERE YEAR(created_at)=YEAR(CURDATE()) AND MONTH(created_at)=MONTH(CURDATE())
   `);
-  return { today: today[0], week: week[0], month: month[0] };
+  const [allTime] = await db.query(`
+    SELECT COUNT(*) as orders, COALESCE(SUM(total_amount),0) as total
+    FROM sales
+  `);
+
+  // BAGO: cash on hand
+  const [salesAll] = await db.query(`SELECT COALESCE(SUM(total_amount),0) as total FROM sales`);
+  const [returnsAll] = await db.query(`SELECT COALESCE(SUM(total_refund),0) as total FROM returns`);
+  const [outsAll] = await db.query(`SELECT COALESCE(SUM(amount),0) as total FROM cash_outs`);
+
+  const salesIn = Number(salesAll[0].total);
+  const returnsOut = Number(returnsAll[0].total);
+  const expensesOut = Number(outsAll[0].total);
+  const onHand = salesIn - returnsOut - expensesOut;
+
+
+  return { today: today[0], week: week[0], month: month[0], allTime: allTime[0], cash: { salesIn, returnsOut, expensesOut, onHand } };
 };
 
 module.exports = { create, findById, findAll, getSummary };

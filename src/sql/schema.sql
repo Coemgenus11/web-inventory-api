@@ -10,7 +10,7 @@ CREATE TABLE categories (
 );
 
 INSERT INTO categories (name, sku_prefix) VALUES
-('grocery', 'GROC'),
+('other', 'OTHE'),
 ('aice', 'AICE');
 
 CREATE TABLE products (
@@ -84,3 +84,18 @@ CREATE TABLE users (
   role ENUM('admin','user') DEFAULT 'user',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE cash_outs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  amount DECIMAL(12,2) NOT NULL,
+  category ENUM('puhunan','bills','sahod','supplies','withdrawal','other') NOT NULL,
+  description VARCHAR(255),
+  sku VARCHAR(25) NULL,
+  quantity INT NULL,
+  created_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT chk_amount CHECK (amount > 0),
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (sku) REFERENCES products(sku)
+) ENGINE=InnoDB;
