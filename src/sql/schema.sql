@@ -99,3 +99,26 @@ CREATE TABLE cash_outs (
   FOREIGN KEY (created_by) REFERENCES users(id),
   FOREIGN KEY (sku) REFERENCES products(sku)
 ) ENGINE=InnoDB;
+
+-- dagdag status
+ALTER TABLE cash_outs
+  ADD COLUMN status ENUM('pending','complete','cancelled') NOT NULL DEFAULT 'pending' AFTER description,
+  ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+-- i-complete lahat ng lumang data para hindi mabura sa cash on hand
+UPDATE cash_outs SET status = 'complete' WHERE status = 'pending';
+
+-- bagong table para sa items
+CREATE TABLE cash_out_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cash_out_id INT NOT NULL,
+  product_id INT NOT NULL,
+  sku VARCHAR(25) NOT NULL,
+  quantity INT NOT NULL,
+  unit_cost DECIMAL(10,2) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (cash_out_id) REFERENCES cash_outs(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id),
+  CONSTRAINT chk_quantity CHECK (quantity > 0)
+) ENGINE=InnoDB;
+
